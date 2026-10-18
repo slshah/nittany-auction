@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}My Listings | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>My Listings</h1>
+<p><strong>Seller:</strong> {{ session.get("user_email") }}</p>
+
+{% macro listing_table(listings, section_label, allow_edit, allow_deactivate) %}
+<h2>{{ section_label }}</h2>
+{% if listings %}
+<table>
+    <thead>
+    <tr>
+        <th align="left">Title</th>
+        <th align="left">Product</th>
+        <th align="left">Category</th>
+        <th align="left">Reserve</th>
+        <th align="left">Highest Bid</th>
+        <th align="left">Bids / Max</th>
+        <th align="left">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for listing in listings %}
+    <tr>
+        <td>{{ listing["auction_title"] }}</td>
+        <td>{{ listing["product_name"] }}</td>
+        <td>{{ listing["category"] }}</td>
+        <td>${{ "%.2f"|format(listing["reserve_price"]) }}</td>
+        <td>${{ "%.2f"|format(listing["highest_bid"]) }}</td>
+        <td>{{ listing["bid_count"] }} / {{ listing["max_bids"] }}</td>
+        <td>
+            {% if allow_edit %}
+            <a class="na-btn na-btn-secondary" href="{{ url_for('seller_listings.edit_listing', listing_id=listing['listing_id']) }}">Edit</a>
+            {% endif %}
+            {% if allow_deactivate %}
+            {% if allow_edit %}&nbsp;|&nbsp;{% endif %}
+            <form method="POST" action="{{ url_for('seller_listings.deactivate_listing', listing_id=listing['listing_id']) }}" style="display:inline">
+                <button class="na-btn na-btn-danger" type="submit">Deactivate</button>
+            </form>
+            {% endif %}
+            {% if not allow_edit and not allow_deactivate %}
+            &mdash;
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No {{ section_label|lower }} listings.</p>
+{% endif %}
+{% endmacro %}
+
+{{ listing_table(active, "Active", True, True) }}
+{{ listing_table(inactive, "Inactive", True, False) }}
+{{ listing_table(sold, "Sold", False, False) }}
+{% endblock %}

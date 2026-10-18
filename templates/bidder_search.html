@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Product Search | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Product Search</h1>
+<p><strong>Logged in as:</strong> {{ user_email }}</p>
+
+<form method="get" action="{{ url_for('bidder.bidder_product_search') }}">
+    <label for="keyword">Keyword (title, description, category, or seller)</label>
+    <input
+        id="keyword"
+        name="keyword"
+        type="text"
+        value="{{ form_values['keyword'] }}"
+        placeholder="camera, textbook, seller name"
+    >
+
+    <label for="min_price">Minimum current price</label>
+    <input
+        id="min_price"
+        name="min_price"
+        type="number"
+        min="0"
+        step="0.01"
+        value="{{ form_values['min_price'] }}"
+    >
+
+    <label for="max_price">Maximum current price</label>
+    <input
+        id="max_price"
+        name="max_price"
+        type="number"
+        min="0"
+        step="0.01"
+        value="{{ form_values['max_price'] }}"
+    >
+
+    <label for="category">Category</label>
+    <select id="category" name="category">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+        <option
+            value="{{ category['category_name'] }}"
+            {% if form_values['category'] == category['category_name'] %}selected{% endif %}
+        >
+            {{ category["category_name"] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="seller">Seller email or business name</label>
+    <input
+        id="seller"
+        name="seller"
+        type="text"
+        value="{{ form_values['seller'] }}"
+        placeholder="seller@test.edu or business name"
+    >
+
+    <button type="submit">Search Listings</button>
+</form>
+
+<h2>Results</h2>
+{% if results %}
+<table>
+    <thead>
+    <tr>
+        <th align="left">Auction</th>
+        <th align="left">Product</th>
+        <th align="left">Category</th>
+        <th align="left">Current Price</th>
+        <th align="left">Seller</th>
+        <th align="left">Availability</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for listing in results %}
+    <tr>
+        <td>
+            <a href="{{ url_for('bidder.bidder_listing_detail', seller_email=listing['seller_email'], listing_id=listing['listing_id']) }}">
+                {{ listing["auction_title"] }}
+            </a>
+        </td>
+        <td>{{ listing["product_name"] }}</td>
+        <td>{{ listing["category"] }}</td>
+        <td>${{ "%.2f"|format(listing["current_price"]) }}</td>
+        <td>
+            {{ listing["seller_email"] }}
+            {% if listing["business_name"] %}
+            <br>{{ listing["business_name"] }}
+            {% endif %}
+            <br>
+            Avg rating: {{ "%.2f"|format(listing["seller_average_rating"]) }} / 5
+            ({{ listing["seller_rating_count"] }})
+        </td>
+        <td>Active</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No active listings matched your search filters.</p>
+{% endif %}
+
+{% endblock %}

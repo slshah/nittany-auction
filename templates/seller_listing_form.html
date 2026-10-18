@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'edit' %}Edit Listing{% else %}New Listing{% endif %} | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>{% if mode == 'edit' %}Edit Listing{% else %}New Listing{% endif %}</h1>
+
+{% if is_locked %}
+<p><em>This listing has bids. Category, quantity, reserve price, and max bids cannot be changed. Title, product name, and description may still be updated.</em></p>
+{% endif %}
+
+{% set form_action = url_for('seller_listings.edit_listing', listing_id=listing['listing_id']) if mode == 'edit' else url_for('seller_listings.new_listing') %}
+{% set current_category = form_data.get('category') if form_data.get('category') else (listing['category'] if listing else '') %}
+{% set current_title = form_data.get('auction_title') if form_data.get('auction_title') is not none and form_data.get('auction_title') != '' else (listing['auction_title'] if listing else '') %}
+{% set current_product = form_data.get('product_name') if form_data.get('product_name') is not none and form_data.get('product_name') != '' else (listing['product_name'] if listing else '') %}
+{% set current_desc = form_data.get('product_description') if form_data.get('product_description') is not none and form_data.get('product_description') != '' else (listing['product_description'] if listing else '') %}
+{% set current_quantity = form_data.get('quantity') if form_data.get('quantity') else (listing['quantity'] if listing else '1') %}
+{% set current_reserve = form_data.get('reserve_price') if form_data.get('reserve_price') else ('%.2f'|format(listing['reserve_price']) if listing else '0.00') %}
+{% set current_max_bids = form_data.get('max_bids') if form_data.get('max_bids') else (listing['max_bids'] if listing else '5') %}
+
+<form method="POST" action="{{ form_action }}">
+    <label for="auction_title">Auction title</label>
+    <input id="auction_title" name="auction_title" type="text" value="{{ current_title }}" required>
+
+    <label for="product_name">Product name</label>
+    <input id="product_name" name="product_name" type="text" value="{{ current_product }}" required>
+
+    <label for="product_description">Product description</label>
+    <input id="product_description" name="product_description" type="text" value="{{ current_desc }}">
+
+    <label for="category">Category</label>
+    {% if is_locked %}
+    <p><strong>{{ listing["category"] }}</strong> <em>(locked)</em></p>
+    {% else %}
+    <select id="category" name="category" required>
+        <option value="">-- Select a category --</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
+
+    <label for="quantity">Quantity</label>
+    {% if is_locked %}
+    <p><strong>{{ listing["quantity"] }}</strong> <em>(locked)</em></p>
+    {% else %}
+    <input id="quantity" name="quantity" type="number" min="1" step="1" value="{{ current_quantity }}" required>
+    {% endif %}
+
+    <label for="reserve_price">Reserve price ($)</label>
+    {% if is_locked %}
+    <p><strong>${{ "%.2f"|format(listing["reserve_price"]) }}</strong> <em>(locked)</em></p>
+    {% else %}
+    <input id="reserve_price" name="reserve_price" type="number" min="0" step="0.01" value="{{ current_reserve }}" required>
+    {% endif %}
+
+    <label for="max_bids">Max bids</label>
+    {% if is_locked %}
+    <p><strong>{{ listing["max_bids"] }}</strong> <em>(locked)</em></p>
+    {% else %}
+    <input id="max_bids" name="max_bids" type="number" min="1" step="1" value="{{ current_max_bids }}" required>
+    {% endif %}
+
+    <button type="submit">{% if mode == 'edit' %}Save changes{% else %}Create listing{% endif %}</button>
+</form>
+{% endblock %}

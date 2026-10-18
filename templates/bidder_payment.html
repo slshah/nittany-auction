@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Auction Payment | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Auction Payment</h1>
+
+<p><strong>Auction title:</strong> {{ auction_state["auction_title"] }}</p>
+<p><strong>Product name:</strong> {{ auction_state["product_name"] }}</p>
+<p><strong>Amount due:</strong> ${{ "%.2f"|format(auction_state["highest_bid"]) }}</p>
+
+<form method="post">
+    <label for="saved_card">Use a saved card (optional)</label>
+    <select id="saved_card" name="saved_card">
+        <option value="">Enter card details manually</option>
+        {% for card in saved_cards %}
+        <option
+            value="{{ card['credit_card_num'] }}"
+            {% if form_values["saved_card"] == card["credit_card_num"] %}selected{% endif %}
+        >
+            {{ card["display_label"] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <p><strong>Manual card entry (required if no saved card is selected)</strong></p>
+
+    <label for="card_number">Card number</label>
+    <input id="card_number" name="card_number" type="text" value="{{ form_values['card_number'] }}">
+
+    <label for="card_type">Card type</label>
+    <input id="card_type" name="card_type" type="text" value="{{ form_values['card_type'] }}">
+
+    <label for="expire_month">Expire month</label>
+    <input id="expire_month" name="expire_month" type="number" min="1" max="12" value="{{ form_values['expire_month'] }}">
+
+    <label for="expire_year">Expire year</label>
+    <input id="expire_year" name="expire_year" type="number" min="2000" value="{{ form_values['expire_year'] }}">
+
+    <label for="security_code">Security code</label>
+    <input id="security_code" name="security_code" type="text" value="{{ form_values['security_code'] }}">
+
+    <button type="submit">Submit Payment</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Listing Detail | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Listing Detail</h1>
+
+<p><strong>Auction title:</strong> {{ listing["auction_title"] }}</p>
+<p><strong>Product name:</strong> {{ listing["product_name"] }}</p>
+<p><strong>Description:</strong> {{ listing["product_description"] }}</p>
+<p><strong>Category:</strong> {{ listing["category"] }}</p>
+<p><strong>Quantity:</strong> {{ listing["quantity"] }}</p>
+
+<h2>Bid Snapshot</h2>
+<p><strong>Current highest bid:</strong> ${{ "%.2f"|format(highest_bid) }}</p>
+<p><strong>Total bids placed:</strong> {{ total_bids }}</p>
+<p><strong>Remaining bids:</strong> {{ remaining_bids }}</p>
+
+<h2>Place a Bid</h2>
+{% if can_place_bid %}
+<p>Minimum next bid: <strong>${{ "%.2f"|format(minimum_next_bid) }}</strong></p>
+<form method="post" action="{{ url_for('bidder.bidder_place_bid', seller_email=listing['seller_email'], listing_id=listing['listing_id']) }}">
+    <label for="bid_amount">Your bid amount</label>
+    <input id="bid_amount" name="bid_amount" type="number" min="{{ "%.2f"|format(minimum_next_bid) }}" step="0.01" required>
+    <button type="submit">Submit Bid</button>
+</form>
+{% else %}
+<p>You cannot bid on your own listing.</p>
+{% endif %}
+
+<h2>Seller Summary</h2>
+<p><strong>Seller email:</strong> {{ listing["seller_email"] }}</p>
+{% if seller_summary and seller_summary["business_name"] %}
+<p><strong>Business:</strong> {{ seller_summary["business_name"] }}</p>
+{% endif %}
+{% if seller_summary %}
+<p><strong>Average rating:</strong> {{ "%.2f"|format(seller_summary["average_rating"]) }} / 5</p>
+<p><strong>Ratings count:</strong> {{ seller_summary["rating_count"] }}</p>
+{% else %}
+<p>Seller rating summary is not available.</p>
+{% endif %}
+
+<h2>Recent Bids</h2>
+{% if recent_bids %}
+<ul>
+    {% for bid in recent_bids %}
+    <li>{{ bid["bidder_email"] }} bid ${{ "%.2f"|format(bid["bid_price"]) }} at {{ bid["created_at"] }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No bids have been placed on this listing yet.</p>
+{% endif %}
+
+<h2>Recent Seller Reviews</h2>
+{% if recent_reviews %}
+<ul>
+    {% for review in recent_reviews %}
+    <li>
+        {{ review["bidder_email"] }} rated {{ review["rating_value"] }}/5 on {{ review["rating_date"] }}:
+        {{ review["rating_desc"] }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No seller review comments are available yet.</p>
+{% endif %}
+
+{% endblock %}

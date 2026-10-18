@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Auction Results | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Auction Results</h1>
+<p><strong>Logged in as:</strong> {{ user_email }}</p>
+
+{% if results %}
+<table>
+    <thead>
+    <tr>
+        <th align="left">Auction</th>
+        <th align="left">Product</th>
+        <th align="left">Highest Bid</th>
+        <th align="left">Result</th>
+        <th align="left">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in results %}
+    <tr>
+        <td>{{ row["auction_title"] }}</td>
+        <td>{{ row["product_name"] }}</td>
+        <td>${{ "%.2f"|format(row["highest_bid"]) }}</td>
+        <td>{{ row["summary"] }}</td>
+        <td>
+            <a class="na-btn na-btn-secondary" href="{{ url_for('bidder.bidder_auction_result', seller_email=row['seller_email'], listing_id=row['listing_id']) }}">
+                View Result
+            </a>
+            {% if row["payment_required"] %}
+                <br>
+                <a class="na-btn" href="{{ url_for('bidder.bidder_auction_payment', seller_email=row['seller_email'], listing_id=row['listing_id']) }}">
+                    Complete Payment
+                </a>
+            {% endif %}
+            {% if row["can_rate"] %}
+                <br>
+                <a class="na-btn na-btn-secondary" href="{{ url_for('bidder.bidder_auction_result', seller_email=row['seller_email'], listing_id=row['listing_id']) }}">
+                    Rate Seller
+                </a>
+            {% elif row["rating_submitted"] %}
+                <br>
+                Rating submitted
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You have no finished auctions to review yet.</p>
+{% endif %}
+
+{% endblock %}

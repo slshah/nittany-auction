@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Auction Result Detail | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Auction Result Detail</h1>
+
+<p><strong>Auction title:</strong> {{ auction_state["auction_title"] }}</p>
+<p><strong>Product name:</strong> {{ auction_state["product_name"] }}</p>
+<p><strong>Seller:</strong> {{ auction_state["seller_email"] }}</p>
+<p><strong>Highest bid:</strong> ${{ "%.2f"|format(auction_state["highest_bid"]) }}</p>
+<p><strong>Reserve price:</strong> ${{ "%.2f"|format(auction_state["reserve_price"]) }}</p>
+<p><strong>Summary:</strong> {{ result["summary"] }}</p>
+
+{% if auction_state["auction_successful"] %}
+<p><strong>Winning bidder:</strong> {{ auction_state["highest_bidder_email"] }}</p>
+{% endif %}
+
+{% if result["payment_required"] %}
+<p>
+    <a class="na-btn" href="{{ url_for('bidder.bidder_auction_payment', seller_email=auction_state['seller_email'], listing_id=auction_state['listing_id']) }}">
+        Complete Payment
+    </a>
+</p>
+{% endif %}
+
+{% if result["payment_completed"] and auction_state["transaction"] %}
+<p>
+    <strong>Payment amount:</strong> ${{ "%.2f"|format(auction_state["transaction"]["payment"]) }}<br>
+    <strong>Paid at:</strong> {{ auction_state["transaction"]["transaction_date"] }}
+</p>
+{% endif %}
+
+{% if rating_context["can_submit_rating"] %}
+<h2>Rate Seller</h2>
+<form method="post" action="{{ url_for('bidder.bidder_submit_rating', seller_email=auction_state['seller_email'], listing_id=auction_state['listing_id']) }}">
+    <label for="rating_value">Rating (1-5)</label>
+    <input id="rating_value" name="rating_value" type="number" min="1" max="5" step="1" required>
+
+    <label for="rating_desc">Comment (optional)</label>
+    <textarea id="rating_desc" name="rating_desc" rows="3"></textarea>
+
+    <button type="submit">Submit Rating</button>
+</form>
+{% elif rating_context["existing_rating"] %}
+<h2>Your Submitted Rating</h2>
+<p><strong>Rating:</strong> {{ rating_context["existing_rating"]["rating_value"] }} / 5</p>
+<p><strong>Submitted at:</strong> {{ rating_context["existing_rating"]["rating_date"] }}</p>
+{% if rating_context["existing_rating"]["rating_desc"] %}
+<p><strong>Comment:</strong> {{ rating_context["existing_rating"]["rating_desc"] }}</p>
+{% endif %}
+{% endif %}
+
+{% endblock %}

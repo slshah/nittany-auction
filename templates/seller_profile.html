@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Seller Profile | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Seller Profile</h1>
+<p><strong>Email (User ID):</strong> {{ user_email }}</p>
+<p><strong>Balance:</strong> ${{ '%.2f'|format(balance) }}</p>
+<p>Email cannot be changed directly. Use the request form below.</p>
+
+<form method="post" action="{{ url_for('seller.seller_profile') }}">
+    <label for="bank_routing_number">Bank Routing Number</label>
+    <input
+        id="bank_routing_number"
+        name="bank_routing_number"
+        type="text"
+        value="{{ form_values.bank_routing_number }}"
+        required
+    >
+
+    <label for="bank_account_number">Bank Account Number</label>
+    <input
+        id="bank_account_number"
+        name="bank_account_number"
+        type="text"
+        value="{{ form_values.bank_account_number }}"
+        required
+    >
+
+    <label for="new_password">New Password (optional)</label>
+    <input id="new_password" name="new_password" type="password" autocomplete="new-password">
+
+    <label for="confirm_password">Confirm New Password</label>
+    <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password">
+
+    <button type="submit">Save Profile</button>
+</form>
+
+<h2>Request Email Change</h2>
+<form method="post" action="{{ url_for('seller.seller_profile_email_change_request') }}">
+    <label for="requested_email">Requested New Email</label>
+    <input id="requested_email" name="requested_email" type="email" required>
+
+    <label for="request_reason">Reason</label>
+    <textarea id="request_reason" name="request_reason" rows="3" required></textarea>
+
+    <button type="submit">Submit Request to HelpDesk</button>
+</form>
+
+{% endblock %}

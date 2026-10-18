@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Bidder Profile | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Bidder Profile</h1>
+<p><strong>Email (User ID):</strong> {{ user_email }}</p>
+<p>Email cannot be changed directly. Use the request form below.</p>
+
+<form method="post" action="{{ url_for('bidder.bidder_profile') }}">
+    <label for="first_name">First Name</label>
+    <input id="first_name" name="first_name" type="text" value="{{ form_values.first_name }}" required>
+
+    <label for="last_name">Last Name</label>
+    <input id="last_name" name="last_name" type="text" value="{{ form_values.last_name }}" required>
+
+    <label for="age">Age</label>
+    <input id="age" name="age" type="number" min="0" value="{{ form_values.age }}">
+
+    <label for="major">Major</label>
+    <input id="major" name="major" type="text" value="{{ form_values.major }}">
+
+    <label for="home_address_id">Home Address ID</label>
+    <input id="home_address_id" name="home_address_id" type="text" value="{{ form_values.home_address_id }}">
+
+    <label for="new_password">New Password (optional)</label>
+    <input id="new_password" name="new_password" type="password" autocomplete="new-password">
+
+    <label for="confirm_password">Confirm New Password</label>
+    <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password">
+
+    <button type="submit">Save Profile</button>
+</form>
+
+<h2>Request Email Change</h2>
+<form method="post" action="{{ url_for('bidder.bidder_profile_email_change_request') }}">
+    <label for="requested_email">Requested New Email</label>
+    <input id="requested_email" name="requested_email" type="email" required>
+
+    <label for="request_reason">Reason</label>
+    <textarea id="request_reason" name="request_reason" rows="3" required></textarea>
+
+    <button type="submit">Submit Request to HelpDesk</button>
+</form>
+
+{% endblock %}

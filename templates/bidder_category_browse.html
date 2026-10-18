@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Categories | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Category Browser</h1>
+<p><strong>Current category:</strong> {{ category_name }}</p>
+
+
+{% if nodes %}
+<p>
+    <strong>Path:</strong>
+    {% for node in nodes %}
+        {% if not loop.first %} / {% endif %}
+        <a href="{{ url_for('bidder.bidder_category_view', category_name=node) }}">{{ node }}</a>
+    {% endfor %}
+</p>
+{% endif %}
+
+<h2>Subcategories</h2>
+{% if subcategories %}
+<ul>
+    {% for subcategory in subcategories %}
+    <li>
+        <a href="{{ url_for('bidder.bidder_category_view', category_name=subcategory['category_name']) }}">
+            {{ subcategory["category_name"] }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No child categories under this node.</p>
+{% endif %}
+
+<h2>Active Listings</h2>
+{% if listings %}
+<table>
+    <thead>
+    <tr>
+        <th align="left">Auction</th>
+        <th align="left">Product</th>
+        <th align="left">Highest Bid</th>
+        <th align="left">Bids Used</th>
+        <th align="left">Remaining Bids</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for listing in listings %}
+    <tr>
+        <td>
+            <a href="{{ url_for('bidder.bidder_listing_detail', seller_email=listing['seller_email'], listing_id=listing['listing_id']) }}">
+                {{ listing["auction_title"] }}
+            </a>
+        </td>
+        <td>{{ listing["product_name"] }}</td>
+        <td>${{ "%.2f"|format(listing["highest_bid"]) }}</td>
+        <td>{{ listing["bid_count"] }}</td>
+        <td>{{ listing["remaining_bids"] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No active listings in this category.</p>
+{% endif %}
+{% endblock %}

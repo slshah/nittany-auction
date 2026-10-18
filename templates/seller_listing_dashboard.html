@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Seller Listings | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Seller Listing Dashboard</h1>
+<p><strong>Logged in as:</strong> {{ user_email }}</p>
+
+{% for group in status_groups %}
+<h2>{{ group["label"] }} Listings</h2>
+{% set listings = grouped_listings[group["slug"]] %}
+{% if listings %}
+<table>
+    <thead>
+    <tr>
+        <th align="left">Listing ID</th>
+        <th align="left">Auction</th>
+        <th align="left">Category</th>
+        <th align="left">Highest Bid</th>
+        <th align="left">Bids Used</th>
+        <th align="left">Remaining Bids</th>
+        <th align="left">Actions / Notes</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for listing in listings %}
+    <tr>
+        <td>{{ listing["listing_id"] }}</td>
+        <td>
+            <strong>{{ listing["auction_title"] }}</strong><br>
+            {{ listing["product_name"] }}
+        </td>
+        <td>{{ listing["category"] }}</td>
+        <td>${{ "%.2f"|format(listing["highest_bid"]) }}</td>
+        <td>{{ listing["bid_count"] }}</td>
+        <td>{{ listing["remaining_bids"] }}</td>
+        <td>
+            {% if listing["can_edit"] %}
+            <a class="na-btn na-btn-secondary" href="{{ url_for('seller_listings.edit_listing', listing_id=listing['listing_id']) }}">Edit Listing</a>
+            {% else %}
+            <span class="na-muted-note">{{ listing["edit_block_reason"] }}</span>
+            {% endif %}
+
+            {% if listing["status"] == listing_status_active %}
+            <div class="mt-2">
+            <form method="post" action="{{ url_for('seller_listings.deactivate_listing', listing_id=listing['listing_id']) }}">
+                <button class="na-btn na-btn-danger" type="submit">Deactivate</button>
+            </form>
+            </div>
+            {% endif %}
+
+            {% if listing["status"] == 0 and listing["removed_reason"] %}
+            <p>
+                <strong>Removal reason:</strong> {{ listing["removed_reason"] }}<br>
+                <strong>Remaining bids at removal:</strong> {{ listing["remaining_bids_at_removal"] }}<br>
+                {% if listing["removed_at"] %}
+                <strong>Removed at:</strong> {{ listing["removed_at"] }}
+                {% endif %}
+            </p>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No {{ group["label"]|lower }} listings yet.</p>
+{% endif %}
+{% endfor %}
+{% endblock %}

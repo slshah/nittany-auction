@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}HelpDesk Requests | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>HelpDesk Request Queue</h1>
+<p><strong>Logged in as:</strong> {{ user_email }}</p>
+
+<h2>Unassigned Requests (helpdeskteam@lsu.edu)</h2>
+{% if unassigned_requests %}
+<table>
+    <thead>
+    <tr>
+        <th>Request ID</th>
+        <th>Sender</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Created</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for request_row in unassigned_requests %}
+        <tr>
+            <td>{{ request_row.request_id }}</td>
+            <td>{{ request_row.sender_email }}</td>
+            <td>{{ request_row.request_type }}</td>
+            <td>{{ request_row.request_desc }}</td>
+            <td>{{ request_row.created_at or 'N/A' }}</td>
+            <td>
+                {% if can_claim %}
+                <form method="post" action="{{ url_for('helpdesk.helpdesk_claim_request', request_id=request_row.request_id) }}">
+                    <button type="submit">Claim</button>
+                </form>
+                {% else %}
+                Unavailable
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No unassigned requests in queue.</p>
+{% endif %}
+
+<h2>Requests Assigned To Me</h2>
+{% if my_requests %}
+<table>
+    <thead>
+    <tr>
+        <th>Request ID</th>
+        <th>Sender</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Action</th>
+        <th>Description</th>
+        <th>Created</th>
+        <th>Completed</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for request_row in my_requests %}
+        <tr>
+            <td>{{ request_row.request_id }}</td>
+            <td>{{ request_row.sender_email }}</td>
+            <td>{{ request_row.request_type }}</td>
+            <td>
+                {% if request_row.request_status == 1 %}
+                Completed
+                {% else %}
+                Incomplete
+                {% endif %}
+            </td>
+            <td>
+                {% if request_row.request_status == 0 and can_claim %}
+                <form method="post" action="{{ url_for('helpdesk.helpdesk_resolve_request', request_id=request_row.request_id) }}" style="margin-bottom: 8px;">
+                    <input type="hidden" name="decision" value="approve">
+                    <button type="submit">Approve</button>
+                </form>
+                <form method="post" action="{{ url_for('helpdesk.helpdesk_resolve_request', request_id=request_row.request_id) }}">
+                    <input type="hidden" name="decision" value="deny">
+                    <button type="submit">Deny</button>
+                </form>
+                {% else %}
+                N/A
+                {% endif %}
+            </td>
+            <td>{{ request_row.request_desc }}</td>
+            <td>{{ request_row.created_at or 'N/A' }}</td>
+            <td>{{ request_row.completed_at or 'N/A' }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No requests are currently assigned to you.</p>
+{% endif %}
+
+{% endblock %}

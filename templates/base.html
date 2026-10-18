@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}NittanyAuction{% endblock %}</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous"
+    >
+    <style>
+        :root {
+            --na-blue: #114f9a;
+            --na-ink: #1f2933;
+            --na-muted: #52606d;
+            --na-border: #d9e2ec;
+            --na-surface: #ffffff;
+            --na-surface-soft: #f8fbff;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 12% 18%, #d8ebff 0, #edf4fc 33%, #f5f9ff 66%, #f9fbff 100%);
+            color: var(--na-ink);
+        }
+
+        .page-shell {
+            width: min(1080px, 100%);
+            margin: 2.5rem auto;
+            padding: 0 0.9rem;
+        }
+
+        .brand-link {
+            color: var(--na-blue);
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.02em;
+        }
+
+        .na-navbar {
+            background: var(--na-surface);
+            border: 1px solid var(--na-border);
+            border-radius: 14px;
+            box-shadow: 0 10px 28px rgba(17, 79, 154, 0.08);
+            margin-bottom: 0.95rem;
+            padding: 0.35rem 0.85rem;
+        }
+
+        .na-navbar .navbar-brand {
+            color: var(--na-blue);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .na-navbar .navbar-brand:hover {
+            color: #0d3f7a;
+        }
+
+        .na-navbar .navbar-toggler {
+            border-color: #cbd5e1;
+        }
+
+        .na-navbar .nav-link {
+            color: #334e68;
+            font-weight: 600;
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px;
+        }
+
+        .na-navbar .nav-link:hover {
+            color: #102a43;
+            background: #eef4ff;
+        }
+
+        .na-navbar .nav-link.active {
+            color: var(--na-blue);
+            background: #e5efff;
+        }
+
+        .na-user-chip {
+            display: inline-block;
+            margin-right: 0.55rem;
+            padding: 0.28rem 0.58rem;
+            border: 1px solid #d7e2ef;
+            border-radius: 999px;
+            color: #52606d;
+            font-size: 0.86rem;
+            background: #f8fbff;
+        }
+
+        .na-logout-btn {
+            border: 1px solid #c7d2e2;
+            border-radius: 8px;
+            background: #fff;
+            color: #334e68;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.35rem 0.68rem;
+            text-decoration: none;
+        }
+
+        .na-logout-btn:hover {
+            background: #f0f5fc;
+            color: #102a43;
+        }
+
+        .page-card {
+            background: var(--na-surface);
+            border: 1px solid var(--na-border);
+            border-radius: 14px;
+            padding: 1.35rem;
+            box-shadow: 0 14px 38px rgba(17, 79, 154, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 0.65rem;
+            font-size: clamp(1.5rem, 2.8vw, 2rem);
+            color: #102a43;
+        }
+
+        h2 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid #e6edf6;
+            font-size: 1.2rem;
+            color: #334e68;
+        }
+
+        p {
+            margin-bottom: 0.72rem;
+        }
+
+        .flash {
+            padding: 0.62rem 0.78rem;
+            border-radius: 0.55rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid transparent;
+        }
+
+        .flash.error {
+            background: #ffecee;
+            border-color: #f5b8bf;
+            color: #7a1b28;
+        }
+
+        .flash.success {
+            background: #eaf9f0;
+            border-color: #9fd4b2;
+            color: #1d5738;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.26rem;
+            color: #334e68;
+        }
+
+        input:not([type="hidden"]),
+        select,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.55rem 0.7rem;
+            margin-bottom: 0.92rem;
+            border: 1px solid #b8c5d1;
+            border-radius: 8px;
+            background: #fcfdff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input:not([type="hidden"]):focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2);
+            outline: none;
+        }
+
+        button {
+            padding: 0.53rem 0.95rem;
+            border: 1px solid #0b4589;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #1f69c1 0%, #15539e 100%);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: linear-gradient(180deg, #185ca9 0%, #114789 100%);
+        }
+
+        .na-btn {
+            display: inline-block;
+            padding: 0.45rem 0.8rem;
+            border: 1px solid #0b4589;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #1f69c1 0%, #15539e 100%);
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            line-height: 1.2;
+        }
+
+        .na-btn:hover {
+            background: linear-gradient(180deg, #185ca9 0%, #114789 100%);
+            color: #fff;
+        }
+
+        .na-btn-secondary {
+            border-color: #9eb1c8;
+            background: #f4f8ff;
+            color: #204269;
+        }
+
+        .na-btn-secondary:hover {
+            background: #e6efff;
+            color: #173b5d;
+        }
+
+        .na-btn-danger {
+            border-color: #a6202a;
+            background: linear-gradient(180deg, #d63c46 0%, #b6252f 100%);
+            color: #fff;
+        }
+
+        .na-btn-danger:hover {
+            background: linear-gradient(180deg, #bf2e38 0%, #9f1e27 100%);
+            color: #fff;
+        }
+
+        .na-muted-note {
+            color: var(--na-muted);
+            font-size: 0.92rem;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #d7e2ef;
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 0.95rem;
+            background: var(--na-surface);
+        }
+
+        th {
+            background: var(--na-surface-soft);
+            color: #334e68;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #e6edf5;
+            padding: 0.6rem 0.7rem;
+            vertical-align: top;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        a {
+            color: var(--na-blue);
+        }
+
+        a:hover {
+            color: #0b3f7b;
+        }
+
+        @media (max-width: 700px) {
+            .page-shell {
+                margin: 1.2rem auto;
+            }
+
+            .page-card {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    {% set current_endpoint = request.endpoint or "" %}
+    <nav class="navbar navbar-expand-lg navbar-light na-navbar">
+        <div class="container-fluid px-0">
+            <a class="navbar-brand brand-link" href="{{ url_for('auth.index') }}">NittanyAuction</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#site-navbar"
+                aria-controls="site-navbar"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="site-navbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if session.get("user_email") and session.get("user_role") == "bidder" %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint == 'bidder.bidder_welcome' %}active{% endif %}" href="{{ url_for('bidder.bidder_welcome') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['bidder.bidder_categories_root', 'bidder.bidder_category_view', 'bidder.bidder_listing_detail'] %}active{% endif %}" href="{{ url_for('bidder.bidder_categories_root') }}">Browse</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint == 'bidder.bidder_product_search' %}active{% endif %}" href="{{ url_for('bidder.bidder_product_search') }}">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['bidder.bidder_auction_results', 'bidder.bidder_auction_result', 'bidder.bidder_auction_payment', 'bidder.bidder_submit_rating'] %}active{% endif %}" href="{{ url_for('bidder.bidder_auction_results') }}">Results</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['auth.profile', 'auth.profile_update'] %}active{% endif %}" href="{{ url_for('auth.profile') }}">Profile</a>
+                        </li>
+                    {% elif session.get("user_email") and session.get("user_role") == "seller" %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint == 'seller.seller_welcome' %}active{% endif %}" href="{{ url_for('seller.seller_welcome') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['seller_listings.dashboard', 'seller_listings.edit_listing'] %}active{% endif %}" href="{{ url_for('seller_listings.dashboard') }}">Listings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint == 'seller_listings.new_listing' %}active{% endif %}" href="{{ url_for('seller_listings.new_listing') }}">Create Listing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['auth.profile', 'auth.profile_update'] %}active{% endif %}" href="{{ url_for('auth.profile') }}">Profile</a>
+                        </li>
+                    {% elif session.get("user_email") and session.get("user_role") == "helpdesk" %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint == 'helpdesk.helpdesk_welcome' %}active{% endif %}" href="{{ url_for('helpdesk.helpdesk_welcome') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['helpdesk.helpdesk_requests_queue', 'helpdesk.helpdesk_claim_request', 'helpdesk.helpdesk_resolve_request'] %}active{% endif %}" href="{{ url_for('helpdesk.helpdesk_requests_queue') }}">Request Queue</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if current_endpoint in ['auth.profile', 'auth.profile_update'] %}active{% endif %}" href="{{ url_for('auth.profile') }}">Profile</a>
+                        </li>
+                    {% elif current_endpoint == "auth.register" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    {% if session.get("user_email") %}
+                        <span class="na-user-chip">{{ session.get("user_email") }}</span>
+                        <a class="na-logout-btn" href="{{ url_for('auth.logout') }}">Logout</a>
+                    {% elif current_endpoint == "auth.register" %}
+                        <a class="na-logout-btn" href="{{ url_for('auth.login') }}">Back to Login</a>
+                    {% else %}
+                        <a class="na-logout-btn" href="{{ url_for('auth.register') }}">Create Account</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="page-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+    {% block scripts %}{% endblock %}
+</div>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"
+    ></script>
+    </body>
+</html>

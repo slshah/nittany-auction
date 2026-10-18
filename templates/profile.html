@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | NittanyAuction{% endblock %}
+
+{% block content %}
+<h1>Profile</h1>
+
+<form method="post" action="{{ url_for('auth.profile_update') }}">
+    <label for="email">Email</label>
+    <input
+        id="email"
+        type="email"
+        name="email"
+        value="{{ user_email }}"
+        readonly
+    >
+
+    <label for="role">Role</label>
+    <input
+        id="role"
+        type="text"
+        value="{{ user_role }}"
+        readonly
+    >
+
+    <label for="name">Name</label>
+    <input
+        id="name"
+        type="text"
+        name="name"
+        value="{{ profile.get('name', profile.get('full_name', '')) }}"
+    >
+
+    <label for="phone">Phone</label>
+    <input
+        id="phone"
+        type="text"
+        name="phone"
+        value="{{ profile.get('phone', profile.get('phone_number', '')) }}"
+    >
+
+    <label for="city">City</label>
+    <input
+        id="city"
+        type="text"
+        name="city"
+        value="{{ profile.get('city', '') }}"
+    >
+
+    <label for="zip_code">Zip Code</label>
+    <input
+        id="zip_code"
+        type="text"
+        name="zip_code"
+        value="{{ profile.get('zip_code', profile.get('zipcode', '')) }}"
+    >
+
+    <h3>Change Password</h3>
+
+    <label for="current_password">Current Password</label>
+    <input
+        id="current_password"
+        type="password"
+        name="current_password"
+    >
+
+    <label for="new_password">New Password</label>
+    <input
+        id="new_password"
+        type="password"
+        name="new_password"
+    >
+
+    <label for="confirm_new_password">Confirm Password</label>
+    <input
+        id="confirm_new_password"
+        type="password"
+        name="confirm_new_password"
+    >
+
+    <button type="submit">Update</button>
+</form>
+
+<h2>Request User ID (Email) Change</h2>
+<form method="post" action="{{ url_for('auth.profile_email_change_request') }}">
+    <label for="requested_email">Requested New Email</label>
+    <input
+        id="requested_email"
+        name="requested_email"
+        type="email"
+        required
+    >
+
+    <label for="request_reason">Reason</label>
+    <textarea
+        id="request_reason"
+        name="request_reason"
+        rows="3"
+        required
+    ></textarea>
+
+    <button type="submit">Submit Request to HelpDesk</button>
+</form>
+{% endblock %}
