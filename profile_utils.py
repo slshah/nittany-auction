@@ -1,11 +1,19 @@
 from auth_utils import normalize_email
-from password_utils import hash_password_sha256
+from password_utils import hash_password_sha256, verify_password_sha256
 
 HELPDESK_QUEUE_EMAIL = "helpdeskteam@lsu.edu"
 REQUEST_TYPE_CHANGE_ID = "ChangeID"
 
 
-def apply_password_update(cursor, user_email: str, new_password: str, confirm_password: str):
+def apply_password_update(
+    cursor,
+    user_email: str,
+    current_password: str,
+    new_password: str,
+    confirm_password: str,
+):
+    """Change a user's password. Every profile page routes through here, so the
+    current-password check cannot be skipped by any caller."""
     password = new_password or ""
     confirmation = confirm_password or ""
 
@@ -13,6 +21,15 @@ def apply_password_update(cursor, user_email: str, new_password: str, confirm_pa
         return []
 
     errors = []
+    if not current_password:
+        errors.append("Current password is required to change your password.")
+    else:
+        auth_row = cursor.execute(
+            "SELECT hashed_password FROM auth_users WHERE email = ?",
+            (user_email,),
+        ).fetchone()
+        if not auth_row or not verify_password_sha256(auth_row["hashed_password"], current_password):
+            errors.append("Current password is incorrect.")
     if not password:
         errors.append("New password is required when changing password.")
     if not confirmation:

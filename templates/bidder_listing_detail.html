@@ -20,6 +20,7 @@
 {% if can_place_bid %}
 <p>Minimum next bid: <strong>${{ "%.2f"|format(minimum_next_bid) }}</strong></p>
 <form method="post" action="{{ url_for('bidder.bidder_place_bid', seller_email=listing['seller_email'], listing_id=listing['listing_id']) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="bid_amount">Your bid amount</label>
     <input id="bid_amount" name="bid_amount" type="number" min="{{ "%.2f"|format(minimum_next_bid) }}" step="0.01" required>
     <button type="submit">Submit Bid</button>

@@ -29,7 +29,7 @@ Term project for CMPSC 431W (Database Management Systems) at Penn State.
 
 ## Tech
 
-Python 3.10+, Flask 3, SQLite through the standard-library `sqlite3` module (no ORM), Jinja2 templates, pytest.
+Python 3.10+, Flask 3 with Flask-WTF for CSRF protection, SQLite through the standard-library `sqlite3` module (no ORM), Jinja2 templates, pytest.
 
 ### Known limitations
 

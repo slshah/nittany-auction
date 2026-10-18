@@ -19,6 +19,7 @@
 {% set current_max_bids = form_data.get('max_bids') if form_data.get('max_bids') else (listing['max_bids'] if listing else '5') %}
 
 <form method="POST" action="{{ form_action }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="auction_title">Auction title</label>
     <input id="auction_title" name="auction_title" type="text" value="{{ current_title }}" required>
 

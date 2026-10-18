@@ -734,6 +734,7 @@ def bidder_profile():
                 apply_password_update(
                     cursor,
                     bidder_email,
+                    request.form.get("current_password") or "",
                     request.form.get("new_password") or "",
                     request.form.get("confirm_password") or "",
                 )

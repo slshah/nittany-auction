@@ -30,6 +30,7 @@
             <td>
                 {% if can_claim %}
                 <form method="post" action="{{ url_for('helpdesk.helpdesk_claim_request', request_id=request_row.request_id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit">Claim</button>
                 </form>
                 {% else %}
@@ -75,10 +76,12 @@
             <td>
                 {% if request_row.request_status == 0 and can_claim %}
                 <form method="post" action="{{ url_for('helpdesk.helpdesk_resolve_request', request_id=request_row.request_id) }}" style="margin-bottom: 8px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="decision" value="approve">
                     <button type="submit">Approve</button>
                 </form>
                 <form method="post" action="{{ url_for('helpdesk.helpdesk_resolve_request', request_id=request_row.request_id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="decision" value="deny">
                     <button type="submit">Deny</button>
                 </form>

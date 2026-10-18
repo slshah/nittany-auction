@@ -44,6 +44,7 @@
             {% if listing["status"] == listing_status_active %}
             <div class="mt-2">
             <form method="post" action="{{ url_for('seller_listings.deactivate_listing', listing_id=listing['listing_id']) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="na-btn na-btn-danger" type="submit">Deactivate</button>
             </form>
             </div>

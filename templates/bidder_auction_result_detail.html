@@ -34,6 +34,7 @@
 {% if rating_context["can_submit_rating"] %}
 <h2>Rate Seller</h2>
 <form method="post" action="{{ url_for('bidder.bidder_submit_rating', seller_email=auction_state['seller_email'], listing_id=auction_state['listing_id']) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="rating_value">Rating (1-5)</label>
     <input id="rating_value" name="rating_value" type="number" min="1" max="5" step="1" required>
 

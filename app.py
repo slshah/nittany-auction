@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 
 from auth_views import auth_bp
 from bidder_views import bidder_bp
@@ -19,6 +20,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = settings.flask_secret_key
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+CSRFProtect(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(bidder_bp)
 app.register_blueprint(seller_bp)

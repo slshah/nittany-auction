@@ -6,6 +6,7 @@
 <h1>Profile</h1>
 
 <form method="post" action="{{ url_for('auth.profile_update') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="email">Email</label>
     <input
         id="email"
@@ -83,6 +84,7 @@
 
 <h2>Request User ID (Email) Change</h2>
 <form method="post" action="{{ url_for('auth.profile_email_change_request') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="requested_email">Requested New Email</label>
     <input
         id="requested_email"

@@ -5,7 +5,7 @@ from flask import Blueprint, flash, redirect, render_template, request, session,
 from auth_utils import ROLE_TO_ENDPOINT, SUPPORTED_ROLES, normalize_email, normalize_role_label
 from db_utils import get_db_connection
 from password_utils import hash_password_sha256, verify_password_sha256
-from profile_utils import create_email_change_request
+from profile_utils import apply_password_update, create_email_change_request
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -232,43 +232,23 @@ def register_auth_routes():
             flash("Email cannot be changed.", "error")
             return redirect(url_for("auth.profile"))
 
-        current_password = request.form.get("current_password", "")
-        new_password = request.form.get("new_password", "")
-        confirm_password = request.form.get("confirm_new_password", "")
-
-        if new_password or confirm_password:
-            if not current_password:
-                flash("Current password is required.", "error")
+        connection = get_db_connection()
+        try:
+            errors = apply_password_update(
+                connection.cursor(),
+                email,
+                request.form.get("current_password", ""),
+                request.form.get("new_password", ""),
+                request.form.get("confirm_new_password", ""),
+            )
+            if errors:
+                connection.rollback()
+                for error in errors:
+                    flash(error, "error")
                 return redirect(url_for("auth.profile"))
-
-            user = fetch_auth_user_by_email(email)
-            if not user:
-                session.clear()
-                flash("User not found. Please log in again.", "error")
-                return redirect(url_for("auth.login"))
-
-            if not verify_password_sha256(user["hashed_password"], current_password):
-                flash("Current password is incorrect.", "error")
-                return redirect(url_for("auth.profile"))
-
-            if new_password != confirm_password:
-                flash("Passwords do not match.", "error")
-                return redirect(url_for("auth.profile"))
-
-            connection = get_db_connection()
-            try:
-                cursor = connection.cursor()
-                cursor.execute(
-                    """
-                    UPDATE auth_users
-                    SET hashed_password = ?
-                    WHERE email = ?
-                    """,
-                    (hash_password_sha256(new_password), email),
-                )
-                connection.commit()
-            finally:
-                connection.close()
+            connection.commit()
+        finally:
+            connection.close()
 
         flash("Profile updated.", "success")
         return redirect(url_for("auth.profile"))

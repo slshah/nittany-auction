@@ -10,6 +10,7 @@
 <p><strong>Amount due:</strong> ${{ "%.2f"|format(auction_state["highest_bid"]) }}</p>
 
 <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="saved_card">Use a saved card (optional)</label>
     <select id="saved_card" name="saved_card">
         <option value="">Enter card details manually</option>

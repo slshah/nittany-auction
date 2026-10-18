@@ -45,6 +45,7 @@ def seller_profile():
             errors = apply_password_update(
                 cursor,
                 seller_email,
+                request.form.get("current_password") or "",
                 request.form.get("new_password") or "",
                 request.form.get("confirm_password") or "",
             )

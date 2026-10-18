@@ -9,6 +9,7 @@
 <p>Email cannot be changed directly. Use the request form below.</p>
 
 <form method="post" action="{{ url_for('seller.seller_profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="bank_routing_number">Bank Routing Number</label>
     <input
         id="bank_routing_number"
@@ -27,6 +28,9 @@
         required
     >
 
+    <label for="current_password">Current Password (required to change password)</label>
+    <input id="current_password" name="current_password" type="password" autocomplete="current-password">
+
     <label for="new_password">New Password (optional)</label>
     <input id="new_password" name="new_password" type="password" autocomplete="new-password">
 
@@ -38,6 +42,7 @@
 
 <h2>Request Email Change</h2>
 <form method="post" action="{{ url_for('seller.seller_profile_email_change_request') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="requested_email">Requested New Email</label>
     <input id="requested_email" name="requested_email" type="email" required>
 

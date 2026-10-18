@@ -37,6 +37,7 @@
             {% if allow_deactivate %}
             {% if allow_edit %}&nbsp;|&nbsp;{% endif %}
             <form method="POST" action="{{ url_for('seller_listings.deactivate_listing', listing_id=listing['listing_id']) }}" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="na-btn na-btn-danger" type="submit">Deactivate</button>
             </form>
             {% endif %}

@@ -43,7 +43,7 @@ def client(monkeypatch, tmp_path):
     import app as app_module
 
     app_module = importlib.reload(app_module)
-    app_module.app.config.update(TESTING=True)
+    app_module.app.config.update(TESTING=True, WTF_CSRF_ENABLED=False)
 
     with app_module.app.test_client() as test_client:
         yield test_client

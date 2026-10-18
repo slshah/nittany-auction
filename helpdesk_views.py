@@ -99,6 +99,7 @@ def helpdesk_profile():
                 apply_password_update(
                     cursor,
                     helpdesk_email,
+                    request.form.get("current_password") or "",
                     request.form.get("new_password") or "",
                     request.form.get("confirm_password") or "",
                 )
